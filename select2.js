@@ -18,32 +18,45 @@ Apache License or the GPL Licesnse is distributed on an "AS IS" BASIS, WITHOUT W
 CONDITIONS OF ANY KIND, either express or implied. See the Apache License and the GPL License for
 the specific language governing permissions and limitations under the Apache License and the GPL License.
 */
-(function ($) {
-    if(typeof $.fn.each2 == "undefined") {
+"use strict";
+/*global document, window, jQuery, console */
+(function (factory) {
+
+    if (typeof define === 'function' && define.amd) {
+        define(['jquery', 'exports'], factory);
+    }
+    else {
+        if (typeof window.jQuery === 'undefined') {
+            throw new ReferenceError('Cannot find jQuery; Select2 requires jQuery.');
+        }
+        if (typeof window.Select2 === 'undefined') {
+            window.Select2 = {};
+        }
+        else {
+            // If window.Select2 is already defined, then short circuit the function call.
+            return;
+        }
+        factory(window.jQuery, window.Select2);
+    }
+
+})(function ($, Select2) {
+
+    if (typeof $.fn.each2 === "undefined") {
         $.extend($.fn, {
             /*
-            * 4-10 times faster .each replacement
-            * use it carefully, as it overrides jQuery context of element on each iteration
-            */
+             * 4-10 times faster .each replacement
+             * use it carefully, as it overrides jQuery context of element on each iteration
+             */
             each2 : function (c) {
                 var j = $([0]), i = -1, l = this.length;
                 while (
                     ++i < l
-                    && (j.context = j[0] = this[i])
-                    && c.call(j[0], i, j) !== false //"this"=DOM, i=index, j=jQuery object
-                );
+                        && (j.context = j[0] = this[i])
+                        && c.call(j[0], i, j) !== false //"this"=DOM, i=index, j=jQuery object
+                    );
                 return this;
             }
         });
-    }
-})(jQuery);
-
-(function ($, undefined) {
-    "use strict";
-    /*global document, window, jQuery, console */
-
-    if (window.Select2 !== undefined) {
-        return;
     }
 
     var KEY, AbstractSelect2, SingleSelect2, MultiSelect2, nextUid, sizer,
@@ -3255,21 +3268,21 @@ the specific language governing permissions and limitations under the Apache Lic
     };
 
     // exports
-    window.Select2 = {
-        query: {
-            ajax: ajax,
-            local: local,
-            tags: tags
-        }, util: {
-            debounce: debounce,
-            markMatch: markMatch,
-            escapeMarkup: defaultEscapeMarkup,
-            stripDiacritics: stripDiacritics
-        }, "class": {
-            "abstract": AbstractSelect2,
-            "single": SingleSelect2,
-            "multi": MultiSelect2
-        }
+    Select2.query = {
+        ajax: ajax,
+        local: local,
+        tags: tags
+    };
+    Select2.util = {
+        debounce: debounce,
+        markMatch: markMatch,
+        escapeMarkup: defaultEscapeMarkup,
+        stripDiacritics: stripDiacritics
+    };
+    Select2["class"] = {
+        "abstract": AbstractSelect2,
+        "single": SingleSelect2,
+        "multi": MultiSelect2
     };
 
-}(jQuery));
+});
